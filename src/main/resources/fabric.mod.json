@@ -1,27 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "addon-template",
+  "id": "sneedeor",
   "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for the Meteor addons.",
+  "name": "sneedeor",
+  "description": "The sign is a subtle joke.",
   "authors": [
-    "seasnail"
+    "deco"
   ],
   "contact": {
-    "repo": "https://github.com/MeteorDevelopment/meteor-addon-template"
+    "repo": "https://github.com/i9p/sneedeor"
   },
-  "icon": "assets/template/icon.png",
+  "icon": "assets/sneedeor/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.Addon"
+      "moe.deco.sneedeor.SneedeorAddon"
     ]
   },
   "mixins": [
-    "addon-template.mixins.json"
+    "sneedeor.mixins.json"
   ],
   "custom": {
-    "meteor-client:color": "225,25,25"
+    "meteor-client:color": "151,51,51"
   },
   "depends": {
     "java": ">=17",
