@@ -1,7 +1,6 @@
 package moe.deco.sneedeor.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import moe.deco.sneedeor.SneedeorAddon;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.renderer.text.TextRenderer;
 import meteordevelopment.meteorclient.settings.*;
@@ -18,6 +17,7 @@ import meteordevelopment.meteorclient.utils.entity.TargetUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import moe.deco.sneedeor.SneedeorAddon;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -30,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.registry.Registries;
-import net.minecraft.util.math.MathHelper;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -215,7 +214,7 @@ public class CombatPlusHud extends HudElement {
             Renderer2D.COLOR.render(null);
 
             // Player Model
-            drawEntity(renderer.drawContext, (int) x - 185, (int) y - 45, (int) (30 * scale.get()), -playerEntity.prevYaw, -playerEntity.getPitch(), playerEntity);
+            drawEntity(renderer.drawContext, (int) (x - 60 * scale.get()), (int) (y - 15 * scale.get()), (int) (30 * scale.get()), -playerEntity.prevYaw, -playerEntity.getPitch(), playerEntity);
 
             // Moving pos to past player model
             x += 50 * scale.get();
