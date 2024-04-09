@@ -1,14 +1,12 @@
 package moe.deco.sneedeor;
 
 import com.mojang.logging.LogUtils;
-import meteordevelopment.meteorclient.commands.Commands;
-import meteordevelopment.meteorclient.systems.modules.Modules;
-import moe.deco.sneedeor.commands.StarscriptCommand;
-import moe.deco.sneedeor.hud.CombatPlusHud;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
+import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
-import moe.deco.sneedeor.modules.render.DamageIndicator;
+import moe.deco.sneedeor.commands.StarscriptCommand;
+import moe.deco.sneedeor.hud.CombatPlusHud;
 import org.slf4j.Logger;
 
 public class SneedeorAddon extends MeteorAddon {
@@ -21,7 +19,8 @@ public class SneedeorAddon extends MeteorAddon {
         LOG.info("Initializing sneedeor");
 
         // Modules
-        Modules.get().add(new DamageIndicator());
+        //Modules modules = Modules.get();
+        //modules.add(new DamageIndicator());
 
         // Commands
         Commands.add(new StarscriptCommand());
@@ -37,6 +36,6 @@ public class SneedeorAddon extends MeteorAddon {
 
     @Override
     public String getPackage() {
-        return "com.example.addon";
+        return "moe.deco.sneedeor";
     }
 }
