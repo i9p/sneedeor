@@ -5,8 +5,10 @@ import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import moe.deco.sneedeor.commands.StarscriptCommand;
 import moe.deco.sneedeor.hud.CombatPlusHud;
+import moe.deco.sneedeor.modules.combat.Backstabber;
 import org.slf4j.Logger;
 
 public class SneedeorAddon extends MeteorAddon {
@@ -19,8 +21,8 @@ public class SneedeorAddon extends MeteorAddon {
         LOG.info("Initializing sneedeor");
 
         // Modules
-        //Modules modules = Modules.get();
-        //modules.add(new DamageIndicator());
+        Modules modules = Modules.get();
+        modules.add(new Backstabber());
 
         // Commands
         Commands.add(new StarscriptCommand());
