@@ -2,14 +2,12 @@ package moe.deco.sneedeor.modules.combat;
 
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
-import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.entity.EntityUtils;
 import meteordevelopment.meteorclient.utils.entity.SortPriority;
 import meteordevelopment.meteorclient.utils.entity.TargetUtils;
-import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.Entity;
@@ -65,26 +63,10 @@ public class Backstabber extends Module {
         .build()
     );
 
-    private final Setting<ShapeMode> shapeMode = sgRender.add(new EnumSetting.Builder<ShapeMode>()
-        .name("shape-mode")
-        .description("How the shapes are rendered.")
-        .visible(() -> renderPosition.get())
-        .defaultValue(ShapeMode.Both)
-        .build()
-    );
-
-    /*private final Setting<SettingColor> sideColor = sgRender.add(new ColorSetting.Builder()
-        .name("side-color")
-        .description("The side color.")
-        .visible(() -> renderPosition.get())
-        .defaultValue(new SettingColor(255, 0, 255, 55))
-        .build()
-    );*/
-
     private final Setting<SettingColor> lineColor = sgRender.add(new ColorSetting.Builder()
         .name("line-color")
         .description("The line color.")
-        .visible(() -> renderPosition.get())
+        .visible(renderPosition::get)
         .defaultValue(new SettingColor(255, 0, 255))
         .build()
     );
@@ -97,8 +79,8 @@ public class Backstabber extends Module {
 
     @Override
     public void onActivate() {
-        int cooldown = 0;
-        Entity target = null;
+        cooldown = 0;
+        target = null;
     }
 
     @Override
