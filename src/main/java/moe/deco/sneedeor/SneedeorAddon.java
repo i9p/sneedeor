@@ -7,6 +7,7 @@ import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import moe.deco.sneedeor.commands.StarscriptCommand;
+import moe.deco.sneedeor.hud.ActiveModulesPlusHud;
 import moe.deco.sneedeor.hud.CombatPlusHud;
 import moe.deco.sneedeor.modules.combat.Backstabber;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ public class SneedeorAddon extends MeteorAddon {
 
         // HUD
         Hud.get().register(CombatPlusHud.INFO);
+        Hud.get().register(ActiveModulesPlusHud.INFO);
     }
 
     /*@Override
