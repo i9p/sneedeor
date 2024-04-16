@@ -27,8 +27,6 @@ jobs:
               run: chmod +x gradlew
             - name: Build with Gradle
               run: ./gradlew build
-            - name: Remove useless
-              run: rm ./build/libs/*-dev.jar ./build/libs/*-all.jar ./build/libs/*-sources.jar
             - uses: "marvinpinto/action-automatic-releases@latest"
               if: ${{ matrix.Java == '17' }}
               with:
