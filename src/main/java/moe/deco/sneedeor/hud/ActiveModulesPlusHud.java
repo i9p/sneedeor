@@ -299,8 +299,8 @@ public class ActiveModulesPlusHud extends HudElement {
 
                 // Intermediate quads
                 if (index != 0) {
-                    if (x > prevX) renderer.quad(x - 2 - outlineWidth.get(),y-2, prevX - x, outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
-                    else if (x < prevX) renderer.quad(x - 2 - outlineWidth.get(),y-2, prevX - x, -outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
+                    if (x > prevX) renderer.quad(x - 2 - outlineWidth.get(),y - 2, prevX - x, outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
+                    else if (x < prevX) renderer.quad(x - 2 - outlineWidth.get(),y - 2, prevX - x, -outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
 
                     if (prevX + prevTextLength > x + textLength) renderer.quad(x + 2 + textLength + outlineWidth.get(),y-2, (prevX + prevTextLength) - (x + textLength), outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
                     else if (prevX + prevTextLength < x + textLength) renderer.quad(x + 2 + textLength + outlineWidth.get(),y-2, (prevX + prevTextLength) - (x + textLength), -outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
