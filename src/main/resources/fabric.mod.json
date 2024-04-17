@@ -21,7 +21,7 @@
     "sneedeor.mixins.json"
   ],
   "custom": {
-    "meteor-client:color": "151,51,51"
+    "meteor-client:color": "38,89,26"
   },
   "depends": {
     "java": ">=17",
