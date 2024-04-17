@@ -18,6 +18,10 @@ public class ActiveModulesPlusHud extends HudElement {
     private static final Color WHITE = new Color();
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgColor = settings.createGroup("Color");
+    private final SettingGroup sgOutlines = settings.createGroup("Outlines");
+    private final SettingGroup sgScale = settings.createGroup("Scale");
+    private final SettingGroup sgBackground = settings.createGroup("Background");
 
     private final Setting<List<Module>> hiddenModules = sgGeneral.add(new ModuleListSetting.Builder()
         .name("hidden-modules")
@@ -32,33 +36,24 @@ public class ActiveModulesPlusHud extends HudElement {
         .build()
     );
 
-    private final Setting<Boolean> activeInfo = sgGeneral.add(new BoolSetting.Builder()
-        .name("additional-info")
+    private final Setting<Alignment> alignment = sgGeneral.add(new EnumSetting.Builder<Alignment>()
+        .name("alignment")
+        .description("Horizontal alignment.")
+        .defaultValue(Alignment.Auto)
+        .build()
+    );
+
+    private final Setting<Boolean> moduleInfo = sgGeneral.add(new BoolSetting.Builder()
+        .name("module-info")
         .description("Shows additional info from the module next to the name in the active modules list.")
         .defaultValue(true)
         .build()
     );
 
-    private final Setting<SettingColor> moduleInfoColor = sgGeneral.add(new ColorSetting.Builder()
-        .name("module-info-color")
-        .description("Color of module info text.")
-        .defaultValue(new SettingColor(175, 175, 175))
-        .visible(activeInfo::get)
-        .build()
-    );
-
-    private final Setting<ColorMode> colorMode = sgGeneral.add(new EnumSetting.Builder<ColorMode>()
-        .name("color-mode")
-        .description("What color to use for active modules.")
-        .defaultValue(ColorMode.Rainbow)
-        .build()
-    );
-
-    private final Setting<SettingColor> flatColor = sgGeneral.add(new ColorSetting.Builder()
-        .name("flat-color")
-        .description("Color for flat color mode.")
-        .defaultValue(new SettingColor(225, 25, 25))
-        .visible(() -> colorMode.get() == ColorMode.Flat)
+    private final Setting<BracketType> moduleInfoBrackets = sgGeneral.add(new EnumSetting.Builder<BracketType>()
+        .name("module-info-brackets")
+        .description("Show brackets around additional info.")
+        .defaultValue(BracketType.None)
         .build()
     );
 
@@ -69,63 +64,40 @@ public class ActiveModulesPlusHud extends HudElement {
         .build()
     );
 
-    private final Setting<Alignment> alignment = sgGeneral.add(new EnumSetting.Builder<Alignment>()
-        .name("alignment")
-        .description("Horizontal alignment.")
-        .defaultValue(Alignment.Auto)
+    // Color
+
+    private final Setting<ColorMode> colorMode = sgColor.add(new EnumSetting.Builder<ColorMode>()
+        .name("color-mode")
+        .description("What color to use for active modules.")
+        .defaultValue(ColorMode.Rainbow)
         .build()
     );
 
-    private final Setting<Boolean> background = sgGeneral.add(new BoolSetting.Builder()
-        .name("background")
-        .description("Whether or not to render a background.")
-        .defaultValue(false)
+    private final Setting<SettingColor> flatColor = sgColor.add(new ColorSetting.Builder()
+        .name("flat-color")
+        .description("Color for flat color mode.")
+        .defaultValue(new SettingColor(225, 25, 25))
+        .visible(() -> colorMode.get() == ColorMode.Flat)
         .build()
     );
 
-    private final Setting<SettingColor> bgColor = sgGeneral.add(new ColorSetting.Builder()
-        .name("background-color")
-        .description("Color for the background.")
-        .defaultValue(new SettingColor(25, 25, 25, 50))
-        .visible(background::isVisible)
+    private final Setting<SettingColor> moduleInfoColor = sgColor.add(new ColorSetting.Builder()
+        .name("module-info-color")
+        .description("Color of module info text.")
+        .defaultValue(new SettingColor(175, 175, 175))
+        .visible(moduleInfo::get)
         .build()
     );
 
-    private final Setting<Outlines> outlines = sgGeneral.add(new EnumSetting.Builder<Outlines>()
-        .name("outlines")
-        .description("Whether or not to render outlines.")
-        .defaultValue(Outlines.None)
+    private final Setting<SettingColor> moduleInfoBracketColor = sgColor.add(new ColorSetting.Builder()
+        .name("module-brackets-color")
+        .description("Color of module info brackets.")
+        .defaultValue(new SettingColor(125, 125, 125))
+        .visible(() -> moduleInfoBrackets.get() != BracketType.None)
         .build()
     );
 
-    private final Setting<Integer> outlineWidth = sgGeneral.add(new IntSetting.Builder()
-        .name("outline-width")
-        .description("Outline width")
-        .defaultValue(2)
-        .min(1)
-        .sliderMin(1)
-        .visible(() -> outlines.get() != Outlines.None)
-        .build()
-    );
-
-    private final Setting<Boolean> customScale = sgGeneral.add(new BoolSetting.Builder()
-        .name("custom-scale")
-        .description("Applies custom text scale rather than the global one.")
-        .defaultValue(false)
-        .build()
-    );
-
-    private final Setting<Double> scale = sgGeneral.add(new DoubleSetting.Builder()
-        .name("scale")
-        .description("Custom scale.")
-        .visible(customScale::get)
-        .defaultValue(1)
-        .min(0.5)
-        .sliderRange(0.5, 3)
-        .build()
-    );
-
-    private final Setting<Double> rainbowSpeed = sgGeneral.add(new DoubleSetting.Builder()
+    private final Setting<Double> rainbowSpeed = sgColor.add(new DoubleSetting.Builder()
         .name("rainbow-speed")
         .description("Rainbow speed of rainbow color mode.")
         .defaultValue(0.05)
@@ -136,7 +108,7 @@ public class ActiveModulesPlusHud extends HudElement {
         .build()
     );
 
-    private final Setting<Double> rainbowSpread = sgGeneral.add(new DoubleSetting.Builder()
+    private final Setting<Double> rainbowSpread = sgColor.add(new DoubleSetting.Builder()
         .name("rainbow-spread")
         .description("Rainbow spread of rainbow color mode.")
         .defaultValue(0.01)
@@ -147,7 +119,7 @@ public class ActiveModulesPlusHud extends HudElement {
         .build()
     );
 
-    private final Setting<Double> rainbowSaturation = sgGeneral.add(new DoubleSetting.Builder()
+    private final Setting<Double> rainbowSaturation = sgColor.add(new DoubleSetting.Builder()
         .name("rainbow-saturation")
         .defaultValue(1.0d)
         .sliderRange(0.0d, 1.0d)
@@ -155,11 +127,66 @@ public class ActiveModulesPlusHud extends HudElement {
         .build()
     );
 
-    private final Setting<Double> rainbowBrightness = sgGeneral.add(new DoubleSetting.Builder()
+    private final Setting<Double> rainbowBrightness = sgColor.add(new DoubleSetting.Builder()
         .name("rainbow-brightness")
         .defaultValue(1.0d)
         .sliderRange(0.0d, 1.0d)
         .visible(() -> colorMode.get() == ColorMode.Rainbow || colorMode.get() == ColorMode.Astolfo)
+        .build()
+    );
+
+    // Outlines
+
+    private final Setting<Outlines> outlines = sgOutlines.add(new EnumSetting.Builder<Outlines>()
+        .name("outlines")
+        .description("Whether or not to render outlines.")
+        .defaultValue(Outlines.None)
+        .build()
+    );
+
+    private final Setting<Integer> outlineWidth = sgOutlines.add(new IntSetting.Builder()
+        .name("outline-width")
+        .description("Outline width")
+        .defaultValue(2)
+        .min(1)
+        .sliderMin(1)
+        .visible(() -> outlines.get() != Outlines.None)
+        .build()
+    );
+
+    // Scale
+
+    private final Setting<Boolean> customScale = sgScale.add(new BoolSetting.Builder()
+        .name("custom-scale")
+        .description("Applies custom text scale rather than the global one.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<Double> scale = sgScale.add(new DoubleSetting.Builder()
+        .name("scale")
+        .description("Custom scale.")
+        .visible(customScale::get)
+        .defaultValue(1)
+        .min(0.5)
+        .sliderRange(0.5, 3)
+        .build()
+    );
+
+    // Background
+
+    private final Setting<Boolean> background = sgBackground.add(new BoolSetting.Builder()
+        .name("background")
+        .description("Whether or not to render a background.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<SettingColor> bgColor = sgBackground.add(new ColorSetting.Builder()
+        .name("background-color")
+        .description("Color for the background.")
+        .defaultValue(new SettingColor(25, 25, 25, 50))
+        .visible(background::isVisible)
         .build()
     );
 
@@ -274,11 +301,17 @@ public class ActiveModulesPlusHud extends HudElement {
         double textHeight = renderer.textHeight(shadow.get(), getScale());
         double textLength = renderer.textWidth(module.title, shadow.get(), getScale());
 
-        if (activeInfo.get()) {
+        if (moduleInfo.get()) {
             String info = module.getInfoString();
             if (info != null) {
-                renderer.text(info, x + emptySpace + textLength, y, moduleInfoColor.get(), shadow.get(), getScale());
-                textLength += emptySpace + renderer.textWidth(info, shadow.get(), getScale());
+                textLength += emptySpace;
+                renderer.text(moduleInfoBrackets.get().opening, x + textLength, y, moduleInfoBracketColor.get(), shadow.get(), getScale());
+                textLength += renderer.textWidth(moduleInfoBrackets.get().opening, shadow.get(), getScale());
+
+                renderer.text(info, x + textLength, y, moduleInfoColor.get(), shadow.get(), getScale());
+                textLength += renderer.textWidth(info, shadow.get(), getScale());
+                renderer.text(moduleInfoBrackets.get().closing, x + textLength, y, moduleInfoBracketColor.get(), shadow.get(), getScale());
+                textLength += renderer.textWidth(moduleInfoBrackets.get().closing, shadow.get(), getScale());
             }
         }
 
@@ -299,14 +332,13 @@ public class ActiveModulesPlusHud extends HudElement {
 
                 // Intermediate quads
                 if (index != 0) {
+                    // Left intermediate quad
                     if (x > prevX) renderer.quad(x - 2 - outlineWidth.get(),y - 2, prevX - x, outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
                     else if (x < prevX) renderer.quad(x - 2 - outlineWidth.get(),y - 2, prevX - x, -outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
 
+                    // Right intermediate quad
                     if (prevX + prevTextLength > x + textLength) renderer.quad(x + 2 + textLength + outlineWidth.get(),y-2, (prevX + prevTextLength) - (x + textLength), outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
                     else if (prevX + prevTextLength < x + textLength) renderer.quad(x + 2 + textLength + outlineWidth.get(),y-2, (prevX + prevTextLength) - (x + textLength), -outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
-
-                    //renderer.quad(x - 2,y-2,prevX - x, outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
-                    //renderer.quad(x + 2 + textLength,y-2, (prevX + prevTextLength) - (x + textLength), outlineWidth.get(), prevColor, prevColor, prevColor, prevColor);
                 }
             }
         }
@@ -318,9 +350,9 @@ public class ActiveModulesPlusHud extends HudElement {
     private double getModuleWidth(HudRenderer renderer, Module module) {
         double width = renderer.textWidth(module.title, shadow.get(), getScale());
 
-        if (activeInfo.get()) {
+        if (moduleInfo.get()) {
             String info = module.getInfoString();
-            if (info != null) width += renderer.textWidth(" ", shadow.get(), getScale()) + renderer.textWidth(info, shadow.get(), getScale());
+            if (info != null) width += renderer.textWidth(" ", shadow.get(), getScale()) + renderer.textWidth(moduleInfoBrackets.get().opening, shadow.get(), getScale()) + renderer.textWidth(info, shadow.get(), getScale()) + renderer.textWidth(moduleInfoBrackets.get().closing, shadow.get(), getScale());
         }
 
         return width;
@@ -334,6 +366,22 @@ public class ActiveModulesPlusHud extends HudElement {
         Alphabetical,
         Biggest,
         Smallest
+    }
+
+    public enum BracketType {
+        None("", ""),
+        Round("(", ")"),
+        Square("[", "]"),
+        Angled("<", ">"),
+        Curly("{", "}");
+
+        private final String opening;
+        private final String closing;
+
+        BracketType(String opening, String closing) {
+            this.opening = opening;
+            this.closing = closing;
+        }
     }
 
     public enum ColorMode {
