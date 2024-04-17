@@ -8,6 +8,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.entity.EntityUtils;
 import meteordevelopment.meteorclient.utils.entity.SortPriority;
 import meteordevelopment.meteorclient.utils.entity.TargetUtils;
+import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.Entity;
@@ -23,12 +24,34 @@ public class Backstabber extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgRender = settings.createGroup("Render");
 
+    private final Setting<Boolean> continuous = sgGeneral.add(new BoolSetting.Builder()
+        .name("continuous")
+        .description("Continuously teleports.")
+        .build()
+    );
+
     private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
         .name("delay")
         .description("Delay between teleports.")
+        .visible(continuous::get)
         .defaultValue(3)
         .min(0)
         .sliderMax(20)
+        .build()
+    );
+
+    private final Setting<Keybind> keybind = sgGeneral.add(new KeybindSetting.Builder()
+        .name("keybind")
+        .description("The keybind to teleport.")
+        .visible(() -> !continuous.get())
+        .action(this::teleport)
+        .build()
+    );
+
+    private final Setting<Boolean> look = sgGeneral.add(new BoolSetting.Builder()
+        .name("look")
+        .description("Sets the client looking direction to the target.")
+        .visible(() -> !continuous.get())
         .build()
     );
 
@@ -91,28 +114,20 @@ public class Backstabber extends Module {
 
     @EventHandler
     private void tick(TickEvent.Pre event) {
-        if (cooldown > 0) {
-            cooldown--;
-            return;
-        }
-        cooldown = delay.get();
-
         target = TargetUtils.getPlayerTarget(range.get(), priority.get());
         if (target == null) return;
 
         Vec3d targetPos = target.getPos();
-        float targetYaw = (target.getYaw() - 90F) / MathHelper.DEGREES_PER_RADIAN;
-        Vec3d offsetVec = new Vec3d(range.get() / 2F * MathHelper.cos(targetYaw), 0, range.get() / 2F * MathHelper.sin(targetYaw));
+        Vec3d offsetVec = Vec3d.fromPolar(0, target.getYaw()).multiply(range.get() / 2).negate();
         tp = targetPos.add(offsetVec);
 
-        if (randomness.get() == 0) {
-            mc.player.updatePosition(tp.x, tp.y, tp.z);
-        } else {
-            double angle = 2 * Math.PI * random.nextDouble(); // Random angle
-            double distance = randomness.get() * Math.sqrt(random.nextDouble()); // Random distance from the center
-            double x = distance * Math.cos(angle);
-            double z = distance * Math.sin(angle);
-            mc.player.updatePosition(tp.x + x, tp.y, tp.z + z);
+        if (continuous.get()) {
+            if (cooldown > 0) {
+                cooldown--;
+                return;
+            }
+            cooldown = delay.get();
+            teleport();
         }
     }
 
@@ -121,7 +136,6 @@ public class Backstabber extends Module {
         if (target == null || !renderPosition.get()) return;
         double x1, z1; // Starting point of the line
         double x2, z2; // Ending point of the line
-
 
         double radius = randomness.get() == 0 ? 0.5 : randomness.get();
         int segments = 60;
@@ -140,8 +154,25 @@ public class Backstabber extends Module {
             // Draw the segment
             event.renderer.line(x1, tp.y, z1, x2, tp.y, z2, lineColor.get());
         }
+    }
 
+    private void teleport() {
+        if (target == null) return;
+        if (randomness.get() == 0) {
+            mc.player.updatePosition(tp.x, mc.player.getY(), tp.z);
+        } else {
+            double angle = 2 * Math.PI * random.nextDouble(); // Random angle
+            double distance = randomness.get() * Math.sqrt(random.nextDouble()); // Random distance from the center
+            double x = distance * Math.cos(angle);
+            double z = distance * Math.sin(angle);
+            mc.player.updatePosition(tp.x + x, mc.player.getY(), tp.z + z);
+        }
 
-        //event.renderer.sideHorizontal(tp.x - 0.1, tp.y, tp.z - 0.1, tp.x + 0.1, tp.z + 0.1, sideColor.get(), lineColor.get(), shapeMode.get());
+        if (look.get() && !continuous.get()) {
+            double dx = target.getX() - mc.player.getX();
+            double dz = target.getZ() - mc.player.getZ();
+            mc.player.setYaw((float) (Math.atan2(-dx, dz) * 180.0 / Math.PI));
+            mc.player.setPitch(0);
+        }
     }
 }
