@@ -9,7 +9,6 @@ import meteordevelopment.meteorclient.systems.friends.Friends;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
 import meteordevelopment.meteorclient.systems.hud.HudRenderer;
-import meteordevelopment.meteorclient.systems.hud.elements.TextHud;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.entity.*;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
@@ -22,7 +21,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -313,32 +311,32 @@ public class CombatPlusHud extends HudElement {
             double nameWidth = TextRenderer.get().getWidth(nameText);
             double pingWidth = TextRenderer.get().getWidth(pingText);
 
-            TextRenderer.get().render(nameText, x, y, nameColor != null ? nameColor : primaryColor.get());
+            TextRenderer.get().render(nameText, x, y, nameColor != null ? nameColor : primaryColor.get(), true);
             if (displayDamage.get() && heldItem.getItem() != Items.END_CRYSTAL) {
                 Pair<Float, Float> damageValues = new Pair<>(DamageUtils.getAttackDamage(playerEntity, mc.player), DamageUtils.getAttackDamage(mc.player, playerEntity));
                 String outboundText = String.format("+%.2f dmg", damageValues.getRight());
                 friendText += String.format(" (+%.2f)", damageValues.getLeft());
-                TextRenderer.get().render(breakText, x + nameWidth, y, secondaryColor.get());
-                TextRenderer.get().render(outboundText, x + nameWidth + breakWidth, y, (damageValues.getLeft() > damageValues.getRight()) ? RED : GREEN);
+                TextRenderer.get().render(breakText, x + nameWidth, y, secondaryColor.get(), true);
+                TextRenderer.get().render(outboundText, x + nameWidth + breakWidth, y, (damageValues.getLeft() > damageValues.getRight()) ? RED : GREEN, true);
             }
 
             double friendWidth = TextRenderer.get().getWidth(friendText);
 
             y += TextRenderer.get().getHeight();
 
-            TextRenderer.get().render(friendText, x, y, friendColor);
+            TextRenderer.get().render(friendText, x, y, friendColor, true);
 
             if (displayPing.get()) {
-                TextRenderer.get().render(breakText, x + friendWidth, y, secondaryColor.get());
-                TextRenderer.get().render(pingText, x + friendWidth + breakWidth, y, pingColor);
+                TextRenderer.get().render(breakText, x + friendWidth, y, secondaryColor.get(), true);
+                TextRenderer.get().render(pingText, x + friendWidth + breakWidth, y, pingColor, true);
 
                 if (displayDistance.get()) {
-                    TextRenderer.get().render(breakText, x + friendWidth + breakWidth + pingWidth, y, secondaryColor.get());
-                    TextRenderer.get().render(distText, x + friendWidth + breakWidth + pingWidth + breakWidth, y, distColor);
+                    TextRenderer.get().render(breakText, x + friendWidth + breakWidth + pingWidth, y, secondaryColor.get(), true);
+                    TextRenderer.get().render(distText, x + friendWidth + breakWidth + pingWidth + breakWidth, y, distColor, true);
                 }
             } else if (displayDistance.get()) {
-                TextRenderer.get().render(breakText, x + friendWidth, y, secondaryColor.get());
-                TextRenderer.get().render(distText, x + friendWidth + breakWidth, y, distColor);
+                TextRenderer.get().render(breakText, x + friendWidth, y, secondaryColor.get(), true);
+                TextRenderer.get().render(distText, x + friendWidth + breakWidth, y, distColor, true);
             }
 
             TextRenderer.get().end();
@@ -392,7 +390,7 @@ public class CombatPlusHud extends HudElement {
 
                     double enchX = (armorX + 8) - (TextRenderer.get().getWidth(enchantName) / 2);
 
-                    TextRenderer.get().render(enchantName, enchX, armorY, enchantment.isCursed() ? RED : enchantmentTextColor.get());
+                    TextRenderer.get().render(enchantName, enchX, armorY, enchantment.isCursed() ? RED : enchantmentTextColor.get(), true);
                     armorY += TextRenderer.get().getHeight();
                 }
                 slot--;
