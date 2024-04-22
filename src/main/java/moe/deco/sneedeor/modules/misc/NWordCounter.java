@@ -14,7 +14,8 @@ public class NWordCounter extends Module {
     }
 
     private int count = 0;
-    private static final Pattern nwordRegex = Pattern.compile("nig(g(a|er)|let)"); // SHAMELESSLY stolen from atomic
+    private static final Pattern nWordPattern = Pattern.compile(
+        "(nig(g(er|ress|u([rh])|y|a([hr])?)?|([eo])r|r([ae])|ar|ette|nog| |$)|neg(ro|er))");
 
     @Override
     public String getInfoString() {
@@ -29,9 +30,6 @@ public class NWordCounter extends Module {
     @EventHandler
     private void onMessageReceive(ReceiveMessageEvent event) {
         Text message = event.getMessage();
-
-        if (nwordRegex.matcher(message.getString().toLowerCase()).find()) {
-            count++;
-        }
+        count += (int) nWordPattern.matcher(message.getString().toLowerCase()).results().count();
     }
 }
