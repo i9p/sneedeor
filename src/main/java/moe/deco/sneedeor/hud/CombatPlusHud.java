@@ -23,6 +23,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
@@ -98,6 +100,13 @@ public class CombatPlusHud extends HudElement {
         .name("displayed-enchantments")
         .description("The enchantments that are shown on the combat HUD.")
         .defaultValue(getDefaultEnchantments())
+        .build()
+    );
+
+    private final Setting<Boolean> displayEffects = sgGeneral.add(new BoolSetting.Builder()
+        .name("status-effects")
+        .description("Shows the player's status effects. May be misleading!")
+        .defaultValue(true)
         .build()
     );
 
@@ -291,9 +300,10 @@ public class CombatPlusHud extends HudElement {
                 int prot = 0;
                 for (int i = 0; i <= 3; i++) {
                     prot += EnchantmentHelper.getLevel(Enchantments.PROTECTION, getItem(i));
+                    prot += EnchantmentHelper.getLevel(Enchantments.BLAST_PROTECTION, getItem(i));
                 }
-                if (armor == 20.0 && prot == 16) risk = PlayerCategory.Armored;
-                else if (armor == 12.0 && prot == 12 && getItem(2).getItem() == Items.ELYTRA) risk = PlayerCategory.Wasp;
+                if (armor == 20.0 && prot >= 16) risk = PlayerCategory.Armored;
+                else if (armor == 12.0 && prot >= 12 && getItem(2).getItem() == Items.ELYTRA) risk = PlayerCategory.Wasp;
                 else if (armor > 0.0) risk = PlayerCategory.Weak;
                 else risk = PlayerCategory.Naked;
                 if (((heldItem.getItem() instanceof SwordItem || heldItem.getItem() instanceof AxeItem) && risk == PlayerCategory.Armored)
@@ -426,10 +436,24 @@ public class CombatPlusHud extends HudElement {
 
             String healthText = String.format("%.1f", health + absorb);
 
+
             TextRenderer.get().begin(0.5, false, true);
-            y -= TextRenderer.get().getHeight(true);
-            TextRenderer.get().render(healthText, x + 1, y, secondaryColor.get(), true);
+            TextRenderer.get().render(healthText, x + 1, y - TextRenderer.get().getHeight(true), secondaryColor.get(), true);
             TextRenderer.get().end();
+
+            if (displayEffects.get()) {
+                x += 174;
+                TextRenderer.get().begin(0.35, false, true);
+                y -= TextRenderer.get().getHeight(true);
+                Map<StatusEffect, StatusEffectInstance> statusEffects = StatusEffectHelper.getActiveStatusEffects(playerEntity);
+                for (Map.Entry<StatusEffect, StatusEffectInstance> status : statusEffects.entrySet()) {
+                    String statusText = String.format(" %s %d", status.getKey().getName().getString().substring(0,3), (status.getValue().getAmplifier() + 1));
+                    Color statusColor = new Color(status.getKey().getColor()).a(255);
+                    x -= TextRenderer.get().getWidth(statusText, true);
+                    TextRenderer.get().render(statusText, x , y, statusColor, true);
+                }
+                TextRenderer.get().end();
+            }
 
             matrices.pop();
         });
