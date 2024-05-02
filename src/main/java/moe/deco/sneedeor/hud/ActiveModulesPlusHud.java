@@ -251,10 +251,7 @@ public class ActiveModulesPlusHud extends HudElement {
             return;
         }
 
-        rainbowHue1 += rainbowSpeed.get() * renderer.delta;
-        if (rainbowHue1 > 1) rainbowHue1 -= 1;
-        else if (rainbowHue1 < -1) rainbowHue1 += 1;
-
+        rainbowHue1 = MathHelper.floorMod(rainbowHue1 + rainbowSpeed.get() * renderer.delta, 1);
         rainbowHue2 = rainbowHue1;
 
         prevX = x;
@@ -317,9 +314,9 @@ public class ActiveModulesPlusHud extends HudElement {
 
         if (background.get()) renderer.quad(x - 2, y - 2, textLength + 4, textHeight + 2, bg, bg, bg, bg);
         if (outlines.get() != Outlines.None) {
-            if (outlines.get() != Outlines.Right) // Left quad
+            if (outlines.get() != Outlines.Right) // Left quad (If outlines all or left)
                 renderer.quad(x - 2 - outlineWidth.get(), y - 2, outlineWidth.get(), textHeight + 2, prevColor, prevColor, color, color); // Left quad
-            if (outlines.get() != Outlines.Left) // Right quad
+            if (outlines.get() != Outlines.Left) // Right quad (If outlines all or right)
                 renderer.quad(x + 2 + textLength, y - 2, outlineWidth.get(), textHeight + 2, prevColor, prevColor, color, color); // Right quad
             if (outlines.get() == Outlines.All) {
                 // Top and bottom quads
