@@ -3,7 +3,8 @@
   "package": "moe.deco.sneedeor.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ChatScreenMixin"
+    "ChatScreenMixin",
+    "InGameHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -15,6 +15,7 @@ import moe.deco.sneedeor.hud.CombatPlusHud;
 import moe.deco.sneedeor.hud.EquipmentHud;
 import moe.deco.sneedeor.modules.combat.Backstabber;
 import moe.deco.sneedeor.modules.misc.GamerWordCounter;
+import moe.deco.sneedeor.modules.render.Crosshair;
 import moe.deco.sneedeor.utils.SneedeorStarscript;
 import org.slf4j.Logger;
 
@@ -36,6 +37,7 @@ public class SneedeorAddon extends MeteorAddon {
         // Modules
         Modules modules = Modules.get();
         modules.add(new Backstabber());
+        modules.add(new Crosshair());
         modules.add(new GamerWordCounter());
 
         // Commands
